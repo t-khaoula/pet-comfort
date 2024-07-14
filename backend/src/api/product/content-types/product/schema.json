@@ -35,7 +35,8 @@
       "enum": [
         "Dogs",
         "Cats"
-      ]
+      ],
+      "required": true
     }
   }
 }
