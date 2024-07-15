@@ -1,7 +1,13 @@
 const path = require("path");
+const fs = require("fs");
 
 module.exports = ({ env }) => {
   const client = env("DATABASE_CLIENT", "sqlite");
+
+  const caPath = env("DATABASE_SSL_CA");
+  const caContent = caPath
+    ? fs.readFileSync(path.resolve(caPath)).toString()
+    : undefined;
 
   const connections = {
     mysql: {
@@ -15,7 +21,7 @@ module.exports = ({ env }) => {
         ssl: env.bool("DATABASE_SSL") && {
           key: env("DATABASE_SSL_KEY", undefined),
           cert: env("DATABASE_SSL_CERT", undefined),
-          ca: env("DATABASE_SSL_CA"),
+          ca: caContent,
           capath: env("DATABASE_SSL_CAPATH", undefined),
           cipher: env("DATABASE_SSL_CIPHER", undefined),
           rejectUnauthorized: env.bool(
