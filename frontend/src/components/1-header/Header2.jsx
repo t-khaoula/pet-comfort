@@ -7,7 +7,7 @@ import {
   useTheme,
   ListItem,
 } from "@mui/material";
-import logo from "../../assets/logo.png";
+import logo from "/public/assets/logo.png";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";

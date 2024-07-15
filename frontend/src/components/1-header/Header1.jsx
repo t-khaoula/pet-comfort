@@ -51,7 +51,6 @@ const Header1 = () => {
         bgcolor: "rgb(241, 243, 242)",
         py: "4px",
         borderBottomRightRadius: 4,
-        borderBottomRightRadius: 4,
       }}
     >
       <Container>

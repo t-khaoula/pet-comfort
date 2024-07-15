@@ -5,11 +5,8 @@ import {
   Box,
   Button,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
-import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
-import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { useState } from "react";
@@ -23,10 +20,13 @@ import Dialog from "@mui/material/Dialog";
 import CloseIcon from "@mui/icons-material/Close";
 import ProductDetails from "./ProductDetails";
 import { useGetproductByNameQuery } from "../../Redux/product.js";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Main = () => {
   const handleAlignment = (event, newValue) => {
-    setMyData(newValue);
+    if (newValue !== null) {
+      setMyData(newValue);
+    }
   };
 
   const theme = useTheme();
@@ -50,13 +50,23 @@ const Main = () => {
   const [myData, setMyData] = useState(allproductsAPI);
 
   const { data, error, isLoading } = useGetproductByNameQuery(myData);
+  const [clickedProduct, setClickedProduct] = useState({});
 
   if (isLoading) {
-    return <Typography variant="h6">Loading...</Typography>;
+    return (
+      <Box sx={{ py: 11, textAlign: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
-    return <Typography variant="h6">{error.message}</Typography>;
+    return (
+      <Container sx={{ py: 11, textAlign: "center" }}>
+        <Typography variant="h6">{error.error}</Typography>;
+        <Typography variant="h6">Please try again later</Typography>;
+      </Container>
+    );
   }
 
   if (data) {
@@ -123,52 +133,62 @@ const Main = () => {
             justifyContent: { xs: "center", md: "start" },
           }}
         >
-          {data.data.map((item) => {
-            return (
-              <Card
-                key={item.attributes.productTitle}
-                sx={{
-                  maxWidth: 333,
-                  mt: 6,
-                  ":hover .MuiCardMedia-root": {
-                    scale: "1.1",
-                    transition: "0.3s",
-                  },
-                }}
-              >
-                <CardMedia
-                  sx={{ height: 277 }}
-                  image={`${import.meta.env.VITE_BASE_URL}${
-                    item.attributes.productImg.data[0].attributes.url
-                  }`}
-                />
-                <CardContent>
-                  <Stack
-                    direction={"row"}
-                    justifyContent={"space-between"}
-                    alignItems={"center"}
-                  >
-                    <Typography gutterBottom variant="h6" component="div">
-                      {item.attributes.productTitle}
+          <AnimatePresence>
+            {data.data.map((item) => {
+              return (
+                <Card
+                  component={motion.section}
+                  layout
+                  initial={{ transform: "scale(0)" }}
+                  animate={{ transform: "scale(1)" }}
+                  transition={{ duration: 1.6, type: "spring", stiffness: 50 }}
+                  key={item.id}
+                  sx={{
+                    maxWidth: 333,
+                    mt: 6,
+                    ":hover .MuiCardMedia-root": {
+                      scale: "1.1",
+                      transition: "0.3s",
+                    },
+                  }}
+                >
+                  <CardMedia
+                    sx={{ height: 277 }}
+                    image={`${item.attributes.productImg.data[0].attributes.url}`}
+                  />
+                  <CardContent>
+                    <Stack
+                      direction={"row"}
+                      justifyContent={"space-between"}
+                      alignItems={"center"}
+                    >
+                      <Typography gutterBottom variant="h6" component="div">
+                        {item.attributes.productTitle}
+                      </Typography>
+                      <Typography variant="subtitle1" component="p">
+                        ${item.attributes.productPrice}
+                      </Typography>
+                    </Stack>
+                    <Typography variant="body2" color="text.secondary">
+                      {item.attributes.productDescription}
                     </Typography>
-                    <Typography variant="subtitle1" component="p">
-                      ${item.attributes.productPrice}
-                    </Typography>
-                  </Stack>
-                  <Typography variant="body2" color="text.secondary">
-                    {item.attributes.productDescription}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ justifyContent: "space-between" }}>
-                  <Button onClick={handleClickOpen}>
-                    <AddShoppingCartIcon sx={{ mr: 1 }} fontSize="small" />
-                    Add to Cart
-                  </Button>
-                  <Box sx={{ width: "auto" }} />
-                </CardActions>
-              </Card>
-            );
-          })}
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        handleClickOpen();
+                        setClickedProduct(item);
+                      }}
+                    >
+                      <AddShoppingCartIcon sx={{ mr: 1 }} fontSize="small" />
+                      Add to Cart
+                    </Button>
+                    <Box sx={{ width: "auto" }} />
+                  </CardActions>
+                </Card>
+              );
+            })}
+          </AnimatePresence>
         </Stack>
         <Dialog
           sx={{ ".MuiPaper-root": { minWidth: { xs: "100%", md: 800 } } }}
@@ -188,7 +208,7 @@ const Main = () => {
           >
             <CloseIcon />
           </IconButton>{" "}
-          <ProductDetails />
+          <ProductDetails clickedProduct={clickedProduct} />
         </Dialog>
       </Container>
     );

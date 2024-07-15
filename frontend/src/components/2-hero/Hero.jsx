@@ -11,8 +11,8 @@ import { useTheme } from "@emotion/react";
 import IconSection from "./IconSection";
 
 const mySlider = [
-  { text: "ACCESSORIES", link: "src/assets/Hero.jpg" },
-  { text: "PET FOOD", link: "src/assets/Hero2.jpg" },
+  { text: "ACCESSORIES", link: "./assets/Hero.jpg" },
+  { text: "PET FOOD", link: "./assets/Hero2.jpg" },
 ];
 
 const Hero = () => {
@@ -107,7 +107,7 @@ const Hero = () => {
         <Box sx={{ width: "100%", display: { xs: "none", md: "block" } }}>
           <Box sx={{ position: "relative", mb: "8px" }}>
             <img
-              src="src\assets\img1.png"
+              src="./assets/img1.png"
               alt="banner"
               style={{ width: "100%" }}
             />
@@ -153,7 +153,7 @@ const Hero = () => {
           </Box>
           <Box sx={{ position: "relative" }}>
             <img
-              src="src\assets\img2.png"
+              src="./assets/img2.png"
               alt="banner"
               style={{ width: "100%" }}
             />
